@@ -5,7 +5,6 @@
     <classes>
       <class name="com.test.Onotologytree_json.CodeCheck">
         <methods>
-          <include name="setup"/>
           <include name="flatnomenclature_v105"/>
           <include name="afterTest"/>
         </methods>

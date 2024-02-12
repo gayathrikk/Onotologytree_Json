@@ -29,21 +29,6 @@ import org.json.JSONTokener;
 
 public class CodeCheck {
 
-private RemoteWebDriver driver;
-private WebDriverWait wait;
-
-
-			@BeforeTest
-			
-			public void setup() throws Exception
-			{
-			DesiredCapabilities dc = DesiredCapabilities.chrome();
-			       URL url = new URL("http://172.20.23.7:5555/wd/hub");
-			       driver = new RemoteWebDriver(url, dc);
-			       wait = new WebDriverWait(driver, 30);
-			}
-			
-			
 			@Test(priority=1)
 			
 			    public void PixelAnnotation() {
