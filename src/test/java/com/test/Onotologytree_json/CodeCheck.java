@@ -13,6 +13,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -27,209 +28,195 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class CodeCheck {
-	
-	private RemoteWebDriver driver;
-	private WebDriverWait wait;
+
+private RemoteWebDriver driver;
+private WebDriverWait wait;
 
 
-	@BeforeTest
+			@BeforeTest
+			
+			public void setup() throws Exception
+			{
+			DesiredCapabilities dc = DesiredCapabilities.chrome();
+			       URL url = new URL("http://172.20.23.7:5555/wd/hub");
+			       driver = new RemoteWebDriver(url, dc);
+			       wait = new WebDriverWait(driver, 30);
+			}
+			
+			
+			@Test(priority=1)
+			
+			    public void PixelAnnotation() {
+			        testAnnotationValidity("PixelAnnotation");
+			    }
+			
+			@Test(priority=2)
+			    public void Atlas() {
+			        testAnnotationValidity("Atlas");
+			    }
+			
+			@Test(priority=3)
+			    public void FlatTree() {
+			        testAnnotationValidity("FlatTree");
+			    }
+			
+			@Test(priority=4)
+			    public void fetalatlas_v124() {
+			        testAnnotationValidity("fetalatlas_v124");
+			    }
+			
+			@Test(priority=5)
+			    public void ImageQc() {
+			        testAnnotationValidity("ImageQc");
+			    }
+			
+			@Test(priority=6)
+			    public void CellCenter() {
+			        testAnnotationValidity("CellCenter");
+			    }
+			
+			@Test(priority=7)
+			    public void New_Ontologys() {
+			        testAnnotationValidity("New Ontologys");
+			    }
+			
+			@Test(priority=8)
+			    public void Fetal_Atlas_V1_40() {
+			        testAnnotationValidity("Fetal_Atlas_V1.40");
+			    }
+			
+			@Test(priority=9)
+			    public void Superannotate_FB3() {
+			        testAnnotationValidity("Superannotate_FB3");
+			    }
+			
+			@Test(priority=10)
+			    public void flatnomenclature_v105() {
+			        testAnnotationValidity("flatnomenclature_v105");
+			    }
+			
+			@Test(priority=11)
+			    public void fetalatlas_test() {
+			        testAnnotationValidity("fetalatlas_test");
+			    }
+			
+			@Test(priority=12)
+			    public void Superannotate_FB3_First_Hemisphere() {
+			        testAnnotationValidity("Superannotate_FB3_First_Hemisphere");
+			    }
+			
+			@Test(priority=13)
+			    public void Cell_classification_Rakic() {
+			        testAnnotationValidity("Cell classification Rakic");
+			    }
+			
+			@Test(priority=14)
+			    public void Registration() {
+			        testAnnotationValidity("Registration");
+			    }
+			
+			    private void testAnnotationValidity(String annotationName) {
+			        String apiUrl = "https://apollo2.humanbrain.in/GW/getOntology/";
+			
+			        // Create an instance of HttpClient
+			        HttpClient client = HttpClient.newHttpClient();
+			
+			        // Create an HTTP request
+			        HttpRequest request = HttpRequest.newBuilder()
+			                .uri(URI.create(apiUrl))
+			                .build();
+			
+			        try {
+			            // Send the request and get the response
+			            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			
+			            if (response.statusCode() == 200) {
+			                // Parse the JSON response
+			                JSONArray apiResponse = new JSONArray(response.body());
+			
+			                // Search for the annotation by name in the API response
+			                for (int i = 0; i < apiResponse.length(); i++) {
+			                    JSONObject item = apiResponse.getJSONObject(i);
+			
+			                    String responseAnnotationName = item.optString("app_annotation_tree_name");
+			
+			                    // Check if the response contains the desired annotation
+			                    if (responseAnnotationName.equals(annotationName)) {
+			                        JSONObject annotationJson = new JSONObject(item.optString("app_annotation_tree_json"));
+			                        boolean isValid = checkAnnotationValidity(annotationName, annotationJson);
+			
+			                        // Assert the validity of the annotation
+			                        Assert.assertTrue(isValid, "Annotation " + annotationName + " has invalid hex color.");
+			                        return; // Exit the loop if annotation found and tested
+			                    }
+			                }
+			                // If the desired annotation is not found in the response
+			                Assert.fail("Annotation " + annotationName + " not found in API response.");
+			            } else {
+			                Assert.fail("Failed to retrieve data. HTTP Status: " + response.statusCode());
+			            }
+			        } catch (Exception e) {
+			            Assert.fail("Exception occurred: " + e.getMessage());
+			        }
+			    }
+			
+			    private boolean checkAnnotationValidity(String annotationName , JSONObject annotationJson) {
+			        boolean annotationValid = true;
+			
+			        JSONArray msgArray = annotationJson.getJSONArray("msg");
+			
+			        for (int j = 0; j < msgArray.length(); j++) {
+			            JSONObject msgItem = msgArray.getJSONObject(j);
+			            String hexColor = msgItem.optString("color_hex_triplet");
+			
+			            // Check hex color validity
+			            boolean isValidHexColor = isValidHexColor(hexColor);
+			
+			            // Update annotation validity
+			            annotationValid &= isValidHexColor;
+			
+			            // If the hex color is invalid, print a message
+			            if (!isValidHexColor) {
+			            String name = msgItem.getString("text");
+			                System.out.println("Invalid hex color found for Annotation Name " + annotationName + "," + name + " : " + hexColor);
+			            }
+			
+			            // Check hex color for children, if present
+			            if (msgItem.has("children")) {
+			                JSONArray childrenArray = msgItem.getJSONArray("children");
+			                for (int k = 0; k < childrenArray.length(); k++) {
+			                    JSONObject childItem = childrenArray.getJSONObject(k);
+			                    String childHexColor = childItem.optString("color_hex_triplet");
+			
+			                    // Check hex color validity for child
+			                    boolean isValidChildHexColor = isValidHexColor(childHexColor);
+			
+			                    // Update annotation validity
+			                    annotationValid &= isValidChildHexColor;
+			
+			                    // If the hex color is invalid for child, print a message
+			                    if (!isValidChildHexColor) {
+			                    String name = childItem.optString("name");
+			                        System.out.println("Invalid hex color found for Annotation Name " + annotationName + "," + name + " : " + childHexColor);                    }
+			                }
+			            }
+			        }
+			
+			        return annotationValid;
+			    }
+			
+			
+			// Function to check if a hex color code is valid
+			private static boolean isValidHexColor(String hexColor) {
+			   // Check if the hex color code has less than 6 characters
+			
+			   return hexColor.matches("^#?[0-9a-fA-F]{6}$");
+			}
+			   
+			   @AfterTest
+			   public void afterTest() {
+			    driver.quit();
+			   }
+			
+			}
 
-	public void setup() throws Exception
-	{
-	DesiredCapabilities dc = DesiredCapabilities.chrome();
-	       URL url = new URL("http://172.20.23.7:5555/wd/hub");
-	       driver = new RemoteWebDriver(url, dc);
-	       wait = new WebDriverWait(driver, 30);
-	}
-
-	@Test(priority=1)
-	public void login() throws InterruptedException
-	{
-	driver.get("http://dev2meena.humanbrain.in/annotation/portal");
-	driver.manage().window().maximize();
-	  String currentURL = driver.getCurrentUrl();
-	  System.out.println("Current URL: " + currentURL);
-	WebDriverWait wait = new WebDriverWait(driver, 60);
-	driver.switchTo().defaultContent(); // Switch back to default content
-	WebElement viewerElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@title='Ontology Editor']")));
-	if (viewerElement.isEnabled() && viewerElement.isDisplayed()) {
-	   viewerElement.click();
-	   System.out.println("Viewer icon is clicked");
-	} else {
-	   System.out.println("Viewer icon is not clickable");
-	}
-
-
-	  String parentWindow = driver.getWindowHandle();
-	  WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()=' Log In ']")));
-	  if (loginButton != null) {
-	     loginButton.click();
-	     System.out.println("Login button clicked successfully.");
-	  } else {
-	     System.out.println("Login button is not clicked.");
-	  }
-
-	wait.until(ExpectedConditions.numberOfWindowsToBe(2));
-	   Set<String> allWindows = driver.getWindowHandles();
-	  for (String window : allWindows) {
-	     if (!window.equals(parentWindow)) {
-	         driver.switchTo().window(window);
-	         break;
-	     }
-	  }
-	  WebElement emailInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@type='email']")));
-	  if (emailInput != null && emailInput.isDisplayed()) {
-	     emailInput.sendKeys("teamsoftware457@gmail.com");
-	     System.out.println("Email was entered successfully.");
-	  } else {
-	    System.out.println("Email was not entered.");
-	  }
-
-
-	  WebElement nextButton1 = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='Next']")));
-	  if (nextButton1 != null) {
-	     nextButton1.click();
-	     System.out.println("Next button 1 is clicked.");
-	  } else {
-	     System.out.println("Next button 1 is not clicked.");
-	  }
-	 
-	  WebElement passwordInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@aria-label='Enter your password']")));
-	  passwordInput.sendKeys("Health#123");
-	  if (passwordInput.getAttribute("value").equals("Health#123")) {
-	     System.out.println("Password was entered successfully.");
-	  } else {
-	     System.out.println("Password was not entered.");
-	  }
-
-	 
-	  WebElement nextButton2 = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='Next']")));
-	  if (nextButton2 != null) {
-	     nextButton2.click();
-	     System.out.println("Next button 2 is clicked.");
-	  } else {
-	     System.out.println("Next button 2 is not clicked.");
-	  }
-	 
-	  driver.switchTo().window(parentWindow);
-	  System.out.println("Login successfully");
-	 
-	  System.out.println("************************Login validation done***********************");      
-	}
-
-	@Test(priority=2)
-
-	public  void StatusCheck() {
-//	    String apiUrl = "http://dev2mani.humanbrain.in:8000/GW/getOntology/";
-	   String apiUrl = "http://dev2meena.humanbrain.in:8000/GW/getOntology/";
-
-
-	   // Create an instance of HttpClient
-	   HttpClient client = HttpClient.newHttpClient();
-
-	   // Create an HTTP request
-	   HttpRequest request = HttpRequest.newBuilder()
-	           .uri(URI.create(apiUrl))
-	           .build();
-
-	   try {
-	       // Send the request and get the response
-	       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-	       if (response.statusCode() == 200) {
-	           // Parse the JSON response
-	           JSONArray apiResponse = new JSONArray(new JSONTokener(response.body()));
-
-	           // Initialize map to track validity status for each app_annotation_tree_name
-	           Map<String, Boolean> validityMap = new HashMap<>();
-	           
-	           System.out.println(apiResponse);
-	           
-
-	           // Loop through each item in the API response
-	           for (int i = 0; i < apiResponse.length(); i++) {
-	               JSONObject item = apiResponse.getJSONObject(i);
-
-	               String annotationName = item.optString("app_annotation_tree_name");
-	           
-	               String colorJson = item.optString("app_annotation_tree_json");
-	               JSONObject newMy = new JSONObject(colorJson);
-	               
-	               boolean annotationValid = true;
-
-	               // Check if hex color code is valid
-	                    JSONArray msgArray = newMy.getJSONArray("msg");
-
-	               for (int j = 0; j < msgArray.length(); j++) {
-	                        JSONObject msgItem = msgArray.getJSONObject(j);
-	                        String hexColor = msgItem.optString("color_hex_triplet");
-	                        boolean isValidHexColor = isValidHexColor(hexColor);
-
-	                        // Print details which we got
-	                        System.out.println("Annotation Name: " + annotationName);
-	                        System.out.println("Hex Color code: " + hexColor);
-	                        System.out.println("Is Hex Color code valid: " + isValidHexColor);
-	                        System.out.println("-".repeat(30));
-	                       
-	                        annotationValid &= isValidHexColor;
-	                       
-	                     // Check if "children" key exists
-	                        if (msgItem.has("children")) {
-	                            // Accessing the "children" array within "msg" array
-	                            JSONArray childrenArray = msgItem.getJSONArray("children");
-	                            for (int k = 0; k < childrenArray.length(); k++) {
-	                                JSONObject childItem = childrenArray.getJSONObject(k);
-	                                String childHexColor = childItem.optString("color_hex_triplet");
-	                                boolean isValidChildHexColor = isValidHexColor(childHexColor);
-
-	                                // Print details for child items
-	                                System.out.println("Child Item Hex Color code: " + childHexColor);
-	                                System.out.println("Is Child Item Hex Color code valid: " + isValidChildHexColor);
-	                                annotationValid &= isValidChildHexColor;                                
-	                               
-	                                // the below one will print color with the annotation name
-	                                if (!isValidChildHexColor) {
-	                                    System.out.println("Invalid hex color found for annotation " + annotationName + ": " + childHexColor);
-	                                }
-	                                System.out.println("-".repeat(30));
-
-	                            }
-	                        }
-	                    }
-	                    validityMap.put(annotationName, annotationValid);
-	               
-	           }
-
-	           // Print final result for each app_annotation_tree_name
-	           for (Map.Entry<String, Boolean> entry : validityMap.entrySet()) {
-	               String annotationName = entry.getKey();
-	               boolean isValid = entry.getValue();
-	               if (isValid) {
-	                   System.out.println("All hex color codes are valid for: " + annotationName);
-	               } else {
-	                   System.out.println("At least one hex color code is invalid for: " + annotationName);
-	               }
-	           }
-	       } else {
-	           System.out.println("Failed to retrieve data. HTTP Status: " + response.statusCode());
-	       }
-	   } catch (Exception e) {
-	       e.printStackTrace();
-	   }
-	}
-
-
-	// Function to check if a hex color code is valid
-	private static boolean isValidHexColor(String hexColor) {
-	   // Check if the hex color code has less than 6 characters
-
-	   return hexColor.matches("^[0-9A-Fa-f]{6}$") || hexColor.matches("^#[0-9A-Fa-f]{6}$") ;
-
-	}
-	   
-	   @AfterTest
-	   public void afterTest() {
-	    driver.quit();
-	   }
-
-}
