@@ -29,6 +29,10 @@ import org.json.JSONTokener;
 
 public class CodeCheck {
 
+private RemoteWebDriver driver;
+private WebDriverWait wait;
+
+
 			@Test(priority=1)
 			
 			    public void PixelAnnotation() {

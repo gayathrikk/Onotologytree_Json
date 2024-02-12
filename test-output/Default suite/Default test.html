@@ -57,9 +57,9 @@ function toggleAllBoxes() {
 <tr>
 <td>Tests passed/Failed/Skipped:</td><td>13/1/0</td>
 </tr><tr>
-<td>Started on:</td><td>Mon Feb 12 12:34:44 IST 2024</td>
+<td>Started on:</td><td>Mon Feb 12 12:43:54 IST 2024</td>
 </tr>
-<tr><td>Total time:</td><td>7 seconds (7771 ms)</td>
+<tr><td>Total time:</td><td>6 seconds (6693 ms)</td>
 </tr><tr>
 <td>Included groups:</td><td></td>
 </tr><tr>
@@ -76,10 +76,8 @@ function toggleAllBoxes() {
 </tr>
 <tr>
 <td title='com.test.Onotologytree_json.CodeCheck.afterTest()'><b>afterTest</b><br>Test class: com.test.Onotologytree_json.CodeCheck</td>
-<td><div><pre>java.lang.Error: Unresolved compilation problem: 
-	driver cannot be resolved
-
-	at com.test.Onotologytree_json.CodeCheck.afterTest(CodeCheck.java:203)
+<td><div><pre>java.lang.NullPointerException: Cannot invoke &quot;org.openqa.selenium.remote.RemoteWebDriver.quit()&quot; because &quot;this.driver&quot; is null
+	at com.test.Onotologytree_json.CodeCheck.afterTest(CodeCheck.java:207)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -105,10 +103,8 @@ function toggleAllBoxes() {
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:251)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:77)
 </pre></div><a href='#' onClick='toggleBox("stack-trace1118840610", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
-<div class='stack-trace' id='stack-trace1118840610'><pre>java.lang.Error: Unresolved compilation problem: 
-	driver cannot be resolved
-
-	at com.test.Onotologytree_json.CodeCheck.afterTest(CodeCheck.java:203)
+<div class='stack-trace' id='stack-trace1118840610'><pre>java.lang.NullPointerException: Cannot invoke &quot;org.openqa.selenium.remote.RemoteWebDriver.quit()&quot; because &quot;this.driver&quot; is null
+	at com.test.Onotologytree_json.CodeCheck.afterTest(CodeCheck.java:207)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -150,8 +146,8 @@ function toggleAllBoxes() {
 	at org.testng.Assert.fail(Assert.java:99)
 	at org.testng.Assert.failNotEquals(Assert.java:1037)
 	at org.testng.Assert.assertTrue(Assert.java:45)
-	at com.test.Onotologytree_json.CodeCheck.testAnnotationValidity(CodeCheck.java:134)
-	at com.test.Onotologytree_json.CodeCheck.flatnomenclature_v105(CodeCheck.java:80)
+	at com.test.Onotologytree_json.CodeCheck.testAnnotationValidity(CodeCheck.java:138)
+	at com.test.Onotologytree_json.CodeCheck.flatnomenclature_v105(CodeCheck.java:84)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -185,8 +181,8 @@ function toggleAllBoxes() {
 	at org.testng.Assert.fail(Assert.java:99)
 	at org.testng.Assert.failNotEquals(Assert.java:1037)
 	at org.testng.Assert.assertTrue(Assert.java:45)
-	at com.test.Onotologytree_json.CodeCheck.testAnnotationValidity(CodeCheck.java:134)
-	at com.test.Onotologytree_json.CodeCheck.flatnomenclature_v105(CodeCheck.java:80)
+	at com.test.Onotologytree_json.CodeCheck.testAnnotationValidity(CodeCheck.java:138)
+	at com.test.Onotologytree_json.CodeCheck.flatnomenclature_v105(CodeCheck.java:84)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
