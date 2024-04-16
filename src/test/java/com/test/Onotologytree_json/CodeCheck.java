@@ -81,7 +81,7 @@ private WebDriverWait wait;
 			
 			@Test(priority=10)
 			    public void flatnomenclature_v105() {
-			        testAnnotationValidity("flatnomenclature_v105");
+			        testAnnotationValidity("flatnomenclature_v11");
 			    }
 			
 			@Test(priority=11)
